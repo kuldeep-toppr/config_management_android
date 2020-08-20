@@ -1,2 +1,0 @@
-include ':app'
-rootProject.name = "config_management_"
