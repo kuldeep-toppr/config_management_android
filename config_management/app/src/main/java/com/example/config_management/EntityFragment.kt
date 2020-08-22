@@ -1,17 +1,17 @@
 package com.example.config_management
 
 import android.os.Bundle
-import android.util.Log.d
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.fragment_entity.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import retrofit2.Retrofit
 
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
@@ -20,13 +20,12 @@ private const val ARG_PARAM2 = "param2"
 class EntityFragment : Fragment() {
     private var param1: String? = null
     private val myAdapter by lazy {
-        MyAdapter({
-
-
-
-
+        MyAdapter({ Toast.makeText(requireContext(), "viewClicked $it", Toast.LENGTH_SHORT).show()}, {}, {}, {
+            hitApi()
         })
     }
+
+    val api = ApiInterface.getClient().create(ApiService::class.java)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,9 +45,6 @@ class EntityFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val retrofit = Retrofit.Builder()
-            .baseUrl("http://127.0.0.1:8000/")
-            .build()
 
         recyclerview.apply {
             setHasFixedSize(true)
@@ -56,23 +52,41 @@ class EntityFragment : Fragment() {
             adapter = myAdapter
         }
 
-        val api = retrofit.create(ApiService::class.java)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        hitApi()
+    }
+
+    private fun hitApi(){
         if (param1 == "Domains") {
-            api.fetchAllDomains().enqueue(object : Callback<List<DomainClass>> {
-                override fun onResponse(
-                    call: Call<List<DomainClass>>,
-                    response: Response<List<DomainClass>>
-                ) {
-                    myAdapter.myDataset = response.body()!!
-                }
-
-                override fun onFailure(call: Call<List<DomainClass>>, t: Throwable) {
-                    d("fail", "no_resp")
-                }
-
-            })
-
+            val call = api.fetchAllDomains()
+            onDataReceived(call)
+        } else {
+            val call = api.fetchAllFeatures()
+            onDataReceived(call)
         }
+    }
+
+    private fun onDataReceived(call: Call<DomainsInfo>) {
+        call.enqueue(object : Callback<DomainsInfo> {
+            override fun onResponse(call: Call<DomainsInfo>, response: Response<DomainsInfo>) {
+                if (response.isSuccessful) {
+                    Log.e("worked", "onResponse: " + response.body())
+                    response.body()?.domainsInfo?.let {
+                        myAdapter.setData(it)
+                    }
+                } else {
+                    Log.e("not working", "onResponse: ")
+                }
+            }
+
+            override fun onFailure(call: Call<DomainsInfo>, t: Throwable) {
+                Log.e("fail", "no_resp" + t.message)
+            }
+
+        })
     }
 
 
@@ -87,3 +101,6 @@ class EntityFragment : Fragment() {
             }
     }
 }
+
+
+//intent class to switch to new page
