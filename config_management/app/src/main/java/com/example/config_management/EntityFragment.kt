@@ -1,5 +1,7 @@
 package com.example.config_management
 
+import android.app.AlertDialog
+import android.content.DialogInterface
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -20,7 +22,34 @@ private const val ARG_PARAM2 = "param2"
 class EntityFragment : Fragment() {
     private var param1: String? = null
     private val myAdapter by lazy {
-        MyAdapter({ Toast.makeText(requireContext(), "viewClicked $it", Toast.LENGTH_SHORT).show()}, {}, {}, {
+        MyAdapter({ Toast.makeText(requireContext(), "viewClicked $it", Toast.LENGTH_SHORT).show()},
+
+
+            {
+                val myQuittingDialogBox: AlertDialog =
+                AlertDialog.Builder(requireContext()) // set message, title, and icon
+                    .setTitle("Delete")
+                    .setMessage("Do you want to Delete")
+                    .setPositiveButton("Delete",
+                        DialogInterface.OnClickListener { dialog, _ -> //your deleting code
+                            if (param1 == "DOMAINS") {
+                                val call = api?.deleteData(it)
+                                hitApi()
+                            } else {
+//                                val call = api.deleteFeatureFromDomain(id, it)
+                                hitApi()
+                            }
+                            dialog.dismiss()
+                        })
+                    .setNegativeButton("Cancel",
+                        DialogInterface.OnClickListener { dialog, _ -> dialog.dismiss() })
+                    .create()
+                myQuittingDialogBox.show()},
+
+
+
+
+            {}, {
             hitApi()
         })
     }
