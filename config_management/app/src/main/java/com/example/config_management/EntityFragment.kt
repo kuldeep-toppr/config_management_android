@@ -62,14 +62,14 @@ class EntityFragment : Fragment() {
     private fun hitApi(){
         if (param1 == "Domains") {
             val call = api.fetchAllDomains()
-            onDataReceived(call)
+            onDataReceivedDomain(call)
         } else {
             val call = api.fetchAllFeatures()
-            onDataReceived(call)
+            onDataReceivedFeature(call)
         }
     }
 
-    private fun onDataReceived(call: Call<DomainsInfo>) {
+    private fun onDataReceivedDomain(call: Call<DomainsInfo>) {
         call.enqueue(object : Callback<DomainsInfo> {
             override fun onResponse(call: Call<DomainsInfo>, response: Response<DomainsInfo>) {
                 if (response.isSuccessful) {
@@ -83,6 +83,26 @@ class EntityFragment : Fragment() {
             }
 
             override fun onFailure(call: Call<DomainsInfo>, t: Throwable) {
+                Log.e("fail", "no_resp" + t.message)
+            }
+
+        })
+    }
+
+    private fun onDataReceivedFeature(call: Call<FeaturesInfo>) {
+        call.enqueue(object : Callback<FeaturesInfo> {
+            override fun onResponse(call: Call<FeaturesInfo>, response: Response<FeaturesInfo>) {
+                if (response.isSuccessful) {
+                    Log.e("worked", "onResponse: " + response.body())
+                    response.body()?.featuresInfo?.let {
+                        myAdapter.setData(it)
+                    }
+                } else {
+                    Log.e("not working", "onResponse: ")
+                }
+            }
+
+            override fun onFailure(call: Call<FeaturesInfo>, t: Throwable) {
                 Log.e("fail", "no_resp" + t.message)
             }
 

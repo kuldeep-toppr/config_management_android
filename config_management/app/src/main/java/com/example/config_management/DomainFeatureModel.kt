@@ -2,7 +2,7 @@ package com.example.config_management
 
 import com.google.gson.annotations.SerializedName
 
-data class DomainClass(
+data class DomainFeatureModel(
     @SerializedName("name")
     val name: String,
 
@@ -13,5 +13,11 @@ data class DomainClass(
 data class DomainsInfo(
 
     @SerializedName("domains_info")
-    val domainsInfo: List<DomainClass>
+    val domainsInfo: List<DomainFeatureModel>
+)
+
+data class FeaturesInfo(
+
+    @SerializedName("features_info")
+    val featuresInfo: List<DomainFeatureModel>
 )

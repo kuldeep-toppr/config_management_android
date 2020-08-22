@@ -15,7 +15,7 @@ class MyAdapter(
     var retry: () -> Unit
 ) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-    private var myDataset: List<DomainClass> = listOf()
+    private var myDataset: List<DomainFeatureModel> = listOf()
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
@@ -29,7 +29,7 @@ class MyAdapter(
             view.btnDelete.setOnClickListener { onDelete.invoke(myDataset[adapterPosition].id) }
         }
 
-        fun bind(data: DomainClass) {
+        fun bind(data: DomainFeatureModel) {
             view.tvName.text = data.name
         }
     }
@@ -94,8 +94,10 @@ class MyAdapter(
         const val VIEW_MAIN = 1
     }
 
-    fun setData(list: List<DomainClass>) {
+    fun setData(list: List<DomainFeatureModel>) {
         this.myDataset = list
         notifyDataSetChanged()
     }
+
+
 }

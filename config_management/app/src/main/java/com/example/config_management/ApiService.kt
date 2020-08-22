@@ -7,5 +7,5 @@ interface ApiService {
     fun fetchAllDomains(): retrofit2.Call<DomainsInfo>
 
     @GET("feature/")
-    fun fetchAllFeatures(): retrofit2.Call<DomainsInfo>
+    fun fetchAllFeatures(): retrofit2.Call<FeaturesInfo>
 }
