@@ -2,6 +2,7 @@ package com.example.config_management
 
 import android.app.AlertDialog
 import android.content.DialogInterface
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -21,40 +22,52 @@ private const val ARG_PARAM2 = "param2"
 
 class EntityFragment : Fragment() {
     private var param1: String? = null
-    private val myAdapter by lazy {MyAdapter({ Toast.makeText(requireContext(), "viewClicked $it", Toast.LENGTH_SHORT).show()},
+    private val myAdapter by lazy {
+        MyAdapter({
+            Toast.makeText(requireContext(), "viewClicked $it", Toast.LENGTH_SHORT).show()
+            val intent = Intent(view?.context, DetailViewActivity::class.java)
+            intent.putExtra("id", it)
+            intent.putExtra("oldparam", param1)
+            view?.context?.startActivity(intent)
+        },
 
 
             {
                 val delete_id = it
                 val myQuittingDialogBox: AlertDialog =
-                AlertDialog.Builder(requireContext()) // set message, title, and icon
-                    .setTitle("Delete")
-                    .setMessage("Do you want to Delete")
-                    .setPositiveButton("Delete",
-                        DialogInterface.OnClickListener { dialog, _ -> //your deleting code
+                    AlertDialog.Builder(requireContext()) // set message, title, and icon
+                        .setTitle("Delete")
+                        .setMessage("Do you want to Delete")
+                        .setPositiveButton("Delete",
+                            DialogInterface.OnClickListener { dialog, _ -> //your deleting code
 
-                            if (param1 == "Domains") {
-                                val call = api.deleteDomain(delete_id)
-                                onDeleteDomain(call)
-                                println(delete_id)
-                            } else if (param1 == "Features") {
-                                val call = api.deleteFeature(delete_id)
-                                onDeleteFeature(call)
-                                println(delete_id)
-                            }
-                            hitApi()
-                            dialog.dismiss()
-                        })
-                    .setNegativeButton("Cancel",
-                        DialogInterface.OnClickListener { dialog, _ -> dialog.dismiss() })
-                    .create()
-                myQuittingDialogBox.show()},
+                                if (param1 == "Domains") {
+                                    val call = api.deleteDomain(delete_id)
+                                    onDeleteDomain(call)
+                                    println(delete_id)
+                                } else if (param1 == "Features") {
+                                    val call = api.deleteFeature(delete_id)
+                                    onDeleteFeature(call)
+                                    println(delete_id)
+                                }
+                                hitApi()
+                                dialog.dismiss()
+                            })
+                        .setNegativeButton("Cancel",
+                            DialogInterface.OnClickListener { dialog, _ -> dialog.dismiss() })
+                        .create()
+                myQuittingDialogBox.show()
+            },
 
-            {}, {
-            hitApi()
-        })
+            {
+                Toast.makeText(requireContext(), "edit Click $it", Toast.LENGTH_SHORT).show()
+            },
 
-}
+            {
+                hitApi()
+            })
+
+    }
 
     val api = ApiInterface.getClient().create(ApiService::class.java)
 
@@ -90,7 +103,7 @@ class EntityFragment : Fragment() {
         hitApi()
     }
 
-    private fun hitApi(){
+    private fun hitApi() {
         if (param1 == "Domains") {
             val call = api.fetchAllDomains()
             onDataReceivedDomain(call)
@@ -104,7 +117,7 @@ class EntityFragment : Fragment() {
         call.enqueue(object : Callback<DomainsInfo> {
             override fun onResponse(call: Call<DomainsInfo>, response: Response<DomainsInfo>) {
                 if (response.isSuccessful) {
-                    Log.e("worked", "onResponse: " + response.body())
+//                    Log.e("worked", "onResponse: " + response.body())
                     response.body()?.domainsInfo?.let {
                         myAdapter.setData(it)
                     }
@@ -124,7 +137,7 @@ class EntityFragment : Fragment() {
         call.enqueue(object : Callback<FeaturesInfo> {
             override fun onResponse(call: Call<FeaturesInfo>, response: Response<FeaturesInfo>) {
                 if (response.isSuccessful) {
-                    Log.e("worked", "onResponse: " + response.body())
+//                    Log.e("worked", "onResponse: " + response.body())
                     response.body()?.featuresInfo?.let {
                         myAdapter.setData(it)
                     }
@@ -140,7 +153,7 @@ class EntityFragment : Fragment() {
         })
     }
 
-    private fun onDeleteDomain(call: Call<DeleteDomain>){
+    private fun onDeleteDomain(call: Call<DeleteDomain>) {
         call.enqueue(object : Callback<DeleteDomain> {
             override fun onFailure(call: Call<DeleteDomain>, t: Throwable) {
                 Log.e("fail", "no_resp" + t.message)
@@ -153,7 +166,7 @@ class EntityFragment : Fragment() {
         })
     }
 
-    private fun onDeleteFeature(call: Call<DeleteFeature>){
+    private fun onDeleteFeature(call: Call<DeleteFeature>) {
         call.enqueue(object : Callback<DeleteFeature> {
             override fun onFailure(call: Call<DeleteFeature>, t: Throwable) {
                 Log.e("fail", "no_resp" + t.message)

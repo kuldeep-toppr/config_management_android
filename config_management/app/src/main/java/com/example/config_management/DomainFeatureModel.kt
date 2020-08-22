@@ -34,3 +34,24 @@ data class DeleteFeature(
     val featureInfo: DomainFeatureModel
 )
 
+//**************************************************************
+//get one domain/feature details model
+//**************************************************************
+data class DomainDetail(
+
+    @SerializedName("domain_info")
+    val domainInfo: DomainInfo
+)
+
+data class DomainInfo(
+
+    @SerializedName("name")
+    val name: String,
+
+    @SerializedName("id")
+    val id : Int,
+
+    @SerializedName("feature_id_list")
+    val featureList : List<DomainFeatureModel>
+)
+//***************************************************************

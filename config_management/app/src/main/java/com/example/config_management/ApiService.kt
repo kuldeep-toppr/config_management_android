@@ -20,4 +20,7 @@ interface ApiService {
     @DELETE("feature/{id}/")
     fun deleteFeature(@Path("id") id: Int): Call<DeleteFeature>
 
+    @GET("domain/{id}/")
+    fun detailDomain(@Path("id") id: Int): Call<DomainDetail>
+
 }
