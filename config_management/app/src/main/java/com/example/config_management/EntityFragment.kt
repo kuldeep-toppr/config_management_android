@@ -21,24 +21,28 @@ private const val ARG_PARAM2 = "param2"
 
 class EntityFragment : Fragment() {
     private var param1: String? = null
-    private val myAdapter by lazy {
-        MyAdapter({ Toast.makeText(requireContext(), "viewClicked $it", Toast.LENGTH_SHORT).show()},
+    private val myAdapter by lazy {MyAdapter({ Toast.makeText(requireContext(), "viewClicked $it", Toast.LENGTH_SHORT).show()},
 
 
             {
+                val delete_id = it
                 val myQuittingDialogBox: AlertDialog =
                 AlertDialog.Builder(requireContext()) // set message, title, and icon
                     .setTitle("Delete")
                     .setMessage("Do you want to Delete")
                     .setPositiveButton("Delete",
                         DialogInterface.OnClickListener { dialog, _ -> //your deleting code
-                            if (param1 == "DOMAINS") {
-                                val call = api?.deleteData(it)
-                                hitApi()
-                            } else {
-//                                val call = api.deleteFeatureFromDomain(id, it)
-                                hitApi()
+
+                            if (param1 == "Domains") {
+                                val call = api.deleteDomain(delete_id)
+                                onDeleteDomain(call)
+                                println(delete_id)
+                            } else if (param1 == "Features") {
+                                val call = api.deleteFeature(delete_id)
+                                onDeleteFeature(call)
+                                println(delete_id)
                             }
+                            hitApi()
                             dialog.dismiss()
                         })
                     .setNegativeButton("Cancel",
@@ -46,13 +50,11 @@ class EntityFragment : Fragment() {
                     .create()
                 myQuittingDialogBox.show()},
 
-
-
-
             {}, {
             hitApi()
         })
-    }
+
+}
 
     val api = ApiInterface.getClient().create(ApiService::class.java)
 
@@ -92,7 +94,7 @@ class EntityFragment : Fragment() {
         if (param1 == "Domains") {
             val call = api.fetchAllDomains()
             onDataReceivedDomain(call)
-        } else {
+        } else if (param1 == "Features") {
             val call = api.fetchAllFeatures()
             onDataReceivedFeature(call)
         }
@@ -133,6 +135,32 @@ class EntityFragment : Fragment() {
 
             override fun onFailure(call: Call<FeaturesInfo>, t: Throwable) {
                 Log.e("fail", "no_resp" + t.message)
+            }
+
+        })
+    }
+
+    private fun onDeleteDomain(call: Call<DeleteDomain>){
+        call.enqueue(object : Callback<DeleteDomain> {
+            override fun onFailure(call: Call<DeleteDomain>, t: Throwable) {
+                Log.e("fail", "no_resp" + t.message)
+            }
+
+            override fun onResponse(call: Call<DeleteDomain>, response: Response<DeleteDomain>) {
+                println(response.body())
+            }
+
+        })
+    }
+
+    private fun onDeleteFeature(call: Call<DeleteFeature>){
+        call.enqueue(object : Callback<DeleteFeature> {
+            override fun onFailure(call: Call<DeleteFeature>, t: Throwable) {
+                Log.e("fail", "no_resp" + t.message)
+            }
+
+            override fun onResponse(call: Call<DeleteFeature>, response: Response<DeleteFeature>) {
+                println(response.body())
             }
 
         })

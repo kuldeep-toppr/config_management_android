@@ -21,3 +21,16 @@ data class FeaturesInfo(
     @SerializedName("features_info")
     val featuresInfo: List<DomainFeatureModel>
 )
+
+data class DeleteDomain(
+
+    @SerializedName("domain_info")
+    val domainInfo: DomainFeatureModel
+)
+
+data class DeleteFeature(
+
+    @SerializedName("feature_info")
+    val featureInfo: DomainFeatureModel
+)
+

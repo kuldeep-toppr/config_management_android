@@ -7,7 +7,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 object ApiInterface {
     fun getClient(): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("http://192.168.29.122:8000/")
+            .baseUrl("http://192.168.110.1:8000/")
             .addConverterFactory(GsonConverterFactory.create())
             .client(OkHttpClient.Builder().build())
             .build()
