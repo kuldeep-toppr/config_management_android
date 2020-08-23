@@ -1,72 +1,59 @@
 package com.example.config_management
 
-
-import android.R
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import kotlinx.android.synthetic.main.detailed_view.*
+import kotlinx.android.synthetic.main.fragment_detail.*
+import kotlinx.android.synthetic.main.fragment_entity.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-
+// TODO: Rename parameter arguments, choose names that match
+// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val ARG_PARAM1 = "param1"
+private const val ARG_PARAM2 = "param2"
 
 
 class DetailFragment : Fragment() {
-    private var param1: String? = null
-    private var id: Int? = null
-    private val DetailAdapter by lazy {
-        DetailAdapter()
-    }
+
+    private val detailAdapter by lazy {DetailAdapter()}
+
+    private var param1: Int? = null
+    private var param2: String? = null
 
     val api = ApiInterface.getClient().create(ApiService::class.java)
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        println("**********oncreatebefore*****************")
         super.onCreate(savedInstanceState)
-        println("**********oncreateafter*****************")
         arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            id = it.getInt("id")
+            param1 = it.getInt(ARG_PARAM1)
+            param2 = it.getString(ARG_PARAM2)
         }
-        println("***************************************************")
     }
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(com.example.config_management.R.layout.detailed_view, container, false)
+        return inflater.inflate(R.layout.fragment_entity, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        println("*****above*******")
-//
-        val manager = LinearLayoutManager(requireContext())
-        recyclerview2.setLayoutManager(manager)
-        recyclerview2.setHasFixedSize(true)
-        recyclerview2.adapter = DetailAdapter
 
-//        recyclerview.apply {
-//            setHasFixedSize(true)
-//
-//            layoutManager = LinearLayoutManager(requireContext())
-//
-//            adapter = DetailAdapter
-//        }
-        println("*****below*******")
-
+        recyclerview.apply {
+            setHasFixedSize(true)
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = detailAdapter
+        }
     }
-
 
     override fun onResume() {
         super.onResume()
@@ -74,24 +61,28 @@ class DetailFragment : Fragment() {
     }
 
     private fun hitApi() {
-//        if (param1 == "Domains") {
-            val call = api.detailDomain(id!!)
-            println("***************************************************")
+        if (param2 == "Domains") {
+            val call = api.detailDomain(param1!!)
             onDetailDomain(call)
-//        } else if (param1 == "Features") {
-//            val call = api.detailFeature()
-//            onDataReceivedFeature(call)
-//        }
+        } else if (param2 == "Features") {
+            val call = api.detailFeature(param1!!)
+            onDetailFeature(call)
+        }
     }
-
 
 
     private fun onDetailDomain(call: Call<DomainDetail>) {
         call.enqueue(object : Callback<DomainDetail> {
             override fun onResponse(call: Call<DomainDetail>, response: Response<DomainDetail>) {
-                Log.e("domain detail", "final" + response.body())
-//                response.body()?.featuresInfo?.let {
-//                    DetailAdapter.setData(it)
+                if (response.isSuccessful) {
+//                    Log.e("worked", "onResponse: " + response.body())
+                    response.body()?.domainInfo?.featureList?.let {
+                        detailAdapter.setDetailData(it)
+                    }
+
+                } else {
+                    Log.e("not working", "onResponse: ")
+                }
             }
 
             override fun onFailure(call: Call<DomainDetail>, t: Throwable) {
@@ -101,24 +92,36 @@ class DetailFragment : Fragment() {
         })
     }
 
+    private fun onDetailFeature(call: Call<FeatureDetail>) {
+        call.enqueue(object : Callback<FeatureDetail> {
+            override fun onResponse(call: Call<FeatureDetail>, response: Response<FeatureDetail>) {
+                if (response.isSuccessful) {
+//                    Log.e("worked", "onResponse: " + response.body())
+                    response.body()?.featureInfo?.domainList?.let {
+                        detailAdapter.setDetailData(it)
+                    }
 
-
-
-
-
-
-    companion object {
-
-        fun newInstance(param1: String, id: Int) =
-            DetailFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putInt("id", id )
+                } else {
+                    Log.e("not working", "onResponse: ")
                 }
             }
 
+            override fun onFailure(call: Call<FeatureDetail>, t: Throwable) {
+                Log.e("fail", "no_resp" + t.message)
+            }
+
+        })
+    }
+
+    companion object {
+
+        @JvmStatic
+        fun newInstance(param1: Int, param2: String) =
+            DetailFragment().apply {
+                arguments = Bundle().apply {
+                    putInt(ARG_PARAM1, param1)
+                    putString(ARG_PARAM2, param2)
+                }
+            }
     }
 }
-
-
-//intent class to switch to new page

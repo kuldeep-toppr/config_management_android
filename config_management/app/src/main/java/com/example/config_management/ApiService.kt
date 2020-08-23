@@ -23,4 +23,6 @@ interface ApiService {
     @GET("domain/{id}/")
     fun detailDomain(@Path("id") id: Int): Call<DomainDetail>
 
+    @GET("feature/{id}/")
+    fun detailFeature(@Path("id") id: Int): Call<FeatureDetail>
 }

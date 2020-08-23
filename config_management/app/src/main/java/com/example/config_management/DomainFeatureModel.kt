@@ -55,3 +55,20 @@ data class DomainInfo(
     val featureList : List<DomainFeatureModel>
 )
 //***************************************************************
+data class FeatureDetail(
+
+    @SerializedName("feature_info")
+    val featureInfo: FeatureInfo
+)
+
+data class FeatureInfo(
+
+    @SerializedName("name")
+    val name: String,
+
+    @SerializedName("id")
+    val id : Int,
+
+    @SerializedName("domain_id_list")
+    val domainList : List<DomainFeatureModel>
+)
