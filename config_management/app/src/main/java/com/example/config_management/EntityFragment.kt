@@ -43,11 +43,9 @@ class EntityFragment : Fragment() {
                                 if (param1 == "Domains") {
                                     val call = api.deleteDomain(delete_id)
                                     onDeleteDomain(call)
-                                    println(delete_id)
                                 } else if (param1 == "Features") {
                                     val call = api.deleteFeature(delete_id)
                                     onDeleteFeature(call)
-                                    println(delete_id)
                                 }
                                 hitApi()
                                 dialog.dismiss()
