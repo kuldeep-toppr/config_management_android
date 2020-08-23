@@ -104,3 +104,21 @@ data class AddDomain(
     @SerializedName("feature_id_list")
     val featureIdList: List<Int>
 )
+//***************************************************************
+data class EditFeatureResponse(
+
+    @SerializedName("feature_info")
+    val featureInfo: DomainFeatureModel,
+
+    @SerializedName("error_message")
+    val errorMessage: String
+)
+
+data class EditFeature(
+
+    @SerializedName("feature_id")
+    val id: Int,
+
+    @SerializedName("feature_name")
+    val name: String
+)

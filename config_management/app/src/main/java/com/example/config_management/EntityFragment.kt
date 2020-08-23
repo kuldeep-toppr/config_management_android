@@ -24,7 +24,6 @@ class EntityFragment : Fragment() {
     private var param1: String? = null
     private val myAdapter by lazy {
         MyAdapter({
-            Toast.makeText(requireContext(), "viewClicked $it", Toast.LENGTH_SHORT).show()
             val intent = Intent(view?.context, DetailViewActivity::class.java)
             intent.putExtra("id", it)
             intent.putExtra("oldparam", param1)
@@ -60,7 +59,16 @@ class EntityFragment : Fragment() {
             },
 
             {
-                Toast.makeText(requireContext(), "edit Click $it", Toast.LENGTH_SHORT).show()
+                if(param1 == "Domains"){
+                    val intent = Intent(view?.context, EditDomainActivity::class.java)
+                    intent.putExtra("id", it)
+                    view?.context?.startActivity(intent)
+                }
+                else{
+                    val intent = Intent(view?.context, EditFeatureActivity::class.java)
+                    intent.putExtra("id", it)
+                    view?.context?.startActivity(intent)
+                }
             },
 
             {
