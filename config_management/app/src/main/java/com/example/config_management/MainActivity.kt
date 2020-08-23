@@ -7,6 +7,8 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Button
+import android.widget.Toast
 
 class MainActivity : AppCompatActivity() {
     private val pagerAdapter by lazy {
@@ -21,6 +23,6 @@ class MainActivity : AppCompatActivity() {
         pagerAdapter.title.add("Features")
         viewpager.adapter = pagerAdapter
         tabs.setupWithViewPager(viewpager)
-
+        
     }
 }

@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.fragment_detail.*
 import kotlinx.android.synthetic.main.fragment_entity.*
+import kotlinx.android.synthetic.main.list_domain_feature_recycler_view.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -42,13 +43,13 @@ class DetailFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_entity, container, false)
+        return inflater.inflate(R.layout.list_domain_feature_recycler_view, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        recyclerview.apply {
+        recyclerview2.apply {
             setHasFixedSize(true)
             layoutManager = LinearLayoutManager(requireContext())
             adapter = detailAdapter

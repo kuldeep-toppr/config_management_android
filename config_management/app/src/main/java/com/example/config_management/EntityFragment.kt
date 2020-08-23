@@ -77,6 +77,7 @@ class EntityFragment : Fragment() {
             param1 = it.getString(ARG_PARAM1)
 
         }
+
     }
 
     override fun onCreateView(
@@ -84,6 +85,7 @@ class EntityFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
+
         return inflater.inflate(R.layout.fragment_entity, container, false)
     }
 
@@ -94,6 +96,16 @@ class EntityFragment : Fragment() {
             setHasFixedSize(true)
             layoutManager = LinearLayoutManager(requireContext())
             adapter = myAdapter
+        }
+
+        if (param1=="Features") {
+            buttonAdd.setOnClickListener {
+                val act = Intent(view?.context, AddFeatureActivity::class.java)
+                view?.context?.startActivity(act)
+            }
+        }
+        else{
+
         }
 
     }
@@ -178,7 +190,6 @@ class EntityFragment : Fragment() {
 
         })
     }
-
 
     companion object {
 
