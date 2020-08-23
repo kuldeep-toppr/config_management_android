@@ -1,10 +1,7 @@
 package com.example.config_management
 
 import retrofit2.Call
-import retrofit2.http.DELETE
-import retrofit2.http.FormUrlEncoded
-import retrofit2.http.GET
-import retrofit2.http.Path
+import retrofit2.http.*
 
 
 interface ApiService {
@@ -25,4 +22,8 @@ interface ApiService {
 
     @GET("feature/{id}/")
     fun detailFeature(@Path("id") id: Int): Call<FeatureDetail>
+
+    @POST("feature/")
+    fun addFeature(@Body name: Name): Call<AddFeature>
+
 }

@@ -11,7 +11,7 @@
         android:layout_above="@id/linearLayout"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="10dp"
-        android:text="Create Feature"
+        android:text="Create Domain"
         android:textAppearance="@style/Base.TextAppearance.AppCompat.Headline" />
 
     <LinearLayout
@@ -29,8 +29,24 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:drawablePadding="5dp"
-            android:hint="Feature Name"
+            android:hint="Domain Name"
             android:inputType="text" />
+
+        <Button
+            android:id="@+id/buttonfeatures"
+            android:layout_width="match_parent"
+            android:layout_height="37dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="3dp"
+            android:layout_marginRight="3dp"
+            android:layout_marginBottom="18dp"
+            android:background="@color/colorPrimary"
+            android:text="Select Features"
+            android:textAllCaps="false" />
 
 
     </LinearLayout>
@@ -59,5 +75,11 @@
         android:background="@color/colorPrimary"
         android:text="Submit"
         android:textAllCaps="false" />
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Button" />
 
 </RelativeLayout>

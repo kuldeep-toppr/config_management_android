@@ -105,7 +105,10 @@ class EntityFragment : Fragment() {
             }
         }
         else{
-
+            buttonAdd.setOnClickListener {
+                val act = Intent(view?.context, AddDomainActivity::class.java)
+                view?.context?.startActivity(act)
+            }
         }
 
     }

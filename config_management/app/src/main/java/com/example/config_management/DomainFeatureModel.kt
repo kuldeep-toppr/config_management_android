@@ -72,3 +72,17 @@ data class FeatureInfo(
     @SerializedName("domain_id_list")
     val domainList : List<DomainFeatureModel>
 )
+//***************************************************************
+data class AddFeature(
+
+    @SerializedName("feature_info")
+    val featureInfo: DomainFeatureModel,
+
+    @SerializedName("error_message")
+    val errorMessage: String
+)
+
+data class Name(
+    @SerializedName("feature_name")
+    val name: String
+)
