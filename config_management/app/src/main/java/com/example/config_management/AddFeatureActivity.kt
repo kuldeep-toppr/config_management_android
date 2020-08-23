@@ -1,6 +1,5 @@
 package com.example.config_management
 
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -30,25 +29,25 @@ class AddFeatureActivity : AppCompatActivity(){
                 return@setOnClickListener
             }
 
-            val postData = Name(name)
+            val postData = AddFeature(name)
 
             api.addFeature(postData)
-                .enqueue(object : Callback<AddFeature>{
+                .enqueue(object : Callback<AddFeatureResponse>{
                     override fun onResponse(
-                        call: Call<AddFeature>,
-                        response: Response<AddFeature>
+                        call: Call<AddFeatureResponse>,
+                        response: Response<AddFeatureResponse>
                     ) {
                         Log.e("didnot work", "onResponse: " + response.body()!!.errorMessage)
                         if (response.body()?.errorMessage!=null){
                             Toast.makeText(applicationContext, response.body()!!.errorMessage, Toast.LENGTH_LONG).show()
                         }
                         else{
-                            val act = Intent(this@AddFeatureActivity, MainActivity::class.java)
-                            this@AddFeatureActivity.startActivity(act)
+                            Toast.makeText(applicationContext, "Feature "+response.body()!!.featureInfo.name+" has been created", Toast.LENGTH_LONG).show()
+                            finish()
                         }
                     }
 
-                    override fun onFailure(call: Call<AddFeature>, t: Throwable) {
+                    override fun onFailure(call: Call<AddFeatureResponse>, t: Throwable) {
                         Log.e("didnot work", "onResponse: " + t.message)
                     }
 
@@ -57,8 +56,7 @@ class AddFeatureActivity : AppCompatActivity(){
         }
 
         buttonCancel.setOnClickListener {
-            val act = Intent(this@AddFeatureActivity, MainActivity::class.java)
-            this@AddFeatureActivity.startActivity(act)
+            finish()
         }
 
     }

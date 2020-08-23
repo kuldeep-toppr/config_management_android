@@ -24,6 +24,9 @@ interface ApiService {
     fun detailFeature(@Path("id") id: Int): Call<FeatureDetail>
 
     @POST("feature/")
-    fun addFeature(@Body name: Name): Call<AddFeature>
+    fun addFeature(@Body name: AddFeature): Call<AddFeatureResponse>
+
+    @POST("domain/")
+    fun addDomain(@Body entity: AddDomain): Call<AddDomainResponse>
 
 }
