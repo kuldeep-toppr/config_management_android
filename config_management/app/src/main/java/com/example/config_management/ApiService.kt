@@ -34,5 +34,6 @@ interface ApiService {
     @PUT("feature/{id}/")
     fun editFeature(@Path("id") id: Int, @Body entity: EditFeature): Call<EditFeatureResponse>
 
-
+    @PUT("domain/{id}/")
+    fun editDomain(@Path("id") id: Int, @Body entity: EditDomain): Call<EditDomainResponse>
 }

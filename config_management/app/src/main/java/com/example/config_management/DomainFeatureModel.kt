@@ -122,3 +122,25 @@ data class EditFeature(
     @SerializedName("feature_name")
     val name: String
 )
+//***************************************************************
+
+data class EditDomainResponse(
+
+    @SerializedName("feature_info")
+    val domainInfo: DomainFeatureModel,
+
+    @SerializedName("error_message")
+    val errorMessage: String
+)
+
+data class EditDomain(
+
+    @SerializedName("domain_id")
+    val id: Int,
+
+    @SerializedName("domain_name")
+    val name: String,
+
+    @SerializedName("feature_id_list")
+    val featureIdList: List<Int>
+)
