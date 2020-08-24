@@ -3,6 +3,8 @@ package com.example.config_management
 import android.app.AlertDialog
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.fragment_add_domain.*
@@ -23,7 +25,7 @@ class AddDomainActivity : AppCompatActivity(){
         setContentView(R.layout.fragment_add_domain)
 
 
-        fun acceptList(featureNames:MutableList<String>, featureIds:MutableList<Int>){
+        fun acceptList(featureNames: MutableList<String>, featureIds: MutableList<Int>){
 
             val convertedFeatureNames: Array<String> = featureNames.toTypedArray()
 
@@ -35,15 +37,19 @@ class AddDomainActivity : AppCompatActivity(){
                 featureBool!![which] = isChecked
             }
 
+
+
             builder.setPositiveButton("Submit"){ dialog, which ->
 
             }
 
-            builder.setNeutralButton("Cancel"){ dialog, which ->
-                dialog.dismiss()
+            builder.setNegativeButton("Clear Selection"){ dialog, which ->
+                featureBool = BooleanArray(convertedFeatureNames.size)
+                Toast.makeText(applicationContext, "All Feature Selections have been cleared", Toast.LENGTH_LONG).show()
             }
 
             var dialog = builder.create()
+
             dialog.show()
 
         }
@@ -62,7 +68,7 @@ class AddDomainActivity : AppCompatActivity(){
                         featureIds.add(res[i].id)
                     }
                     featureBool = BooleanArray(featureIds.size)
-                    buttonfeatures.setOnClickListener{
+                    buttonfeatures.setOnClickListener {
                         acceptList(featureNames, featureIds)
                     }
                 }
@@ -101,17 +107,24 @@ class AddDomainActivity : AppCompatActivity(){
             val api = ApiInterface.getClient().create(ApiService::class.java)
 
             api.addDomain(postData)
-                .enqueue(object : Callback<AddDomainResponse>{
+                .enqueue(object : Callback<AddDomainResponse> {
                     override fun onResponse(
                         call: Call<AddDomainResponse>,
                         response: Response<AddDomainResponse>
                     ) {
                         Log.e("didnot work", "onResponse: " + response.body()!!.errorMessage)
-                        if (response.body()?.errorMessage!=null){
-                            Toast.makeText(applicationContext, response.body()!!.errorMessage, Toast.LENGTH_LONG).show()
-                        }
-                        else{
-                            Toast.makeText(applicationContext, "Domain "+response.body()!!.domainInfo.name+" has been created", Toast.LENGTH_LONG).show()
+                        if (response.body()?.errorMessage != null) {
+                            Toast.makeText(
+                                applicationContext,
+                                response.body()!!.errorMessage,
+                                Toast.LENGTH_LONG
+                            ).show()
+                        } else {
+                            Toast.makeText(
+                                applicationContext,
+                                "Domain " + response.body()!!.domainInfo.name + " has been created",
+                                Toast.LENGTH_LONG
+                            ).show()
                             finish()
                         }
                     }

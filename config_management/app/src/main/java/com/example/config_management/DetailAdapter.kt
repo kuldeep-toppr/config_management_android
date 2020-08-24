@@ -3,6 +3,7 @@ package com.example.config_management
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.list_domain_feature.view.*
 import kotlinx.android.synthetic.main.list_item.view.*

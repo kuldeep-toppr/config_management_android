@@ -46,8 +46,9 @@ class EditDomainActivity : AppCompatActivity(){
 
             }
 
-            builder.setNeutralButton("Cancel"){ dialog, which ->
-                dialog.dismiss()
+            builder.setNegativeButton("Clear Selection"){ dialog, which ->
+                featureBool = BooleanArray(convertedFeatureNames.size)
+                Toast.makeText(applicationContext, "All Feature Selections have been cleared", Toast.LENGTH_LONG).show()
             }
 
             var dialog = builder.create()
