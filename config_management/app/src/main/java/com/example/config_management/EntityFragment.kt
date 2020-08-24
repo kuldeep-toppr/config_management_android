@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.app.ActivityCompat.recreate
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.fragment_entity.*
@@ -48,7 +49,6 @@ class EntityFragment : Fragment() {
                                     val call = api.deleteFeature(delete_id)
                                     onDeleteFeature(call)
                                 }
-                                hitApi()
                                 dialog.dismiss()
                             })
                         .setNegativeButton("Cancel",
