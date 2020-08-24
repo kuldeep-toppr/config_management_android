@@ -4,7 +4,10 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import kotlinx.android.synthetic.main.fragment_add_feature.*
+import kotlinx.android.synthetic.main.fragment_edit_domain.*
+import kotlinx.android.synthetic.main.fragment_edit_feature.*
+import kotlinx.android.synthetic.main.fragment_edit_feature.toolbar
+import kotlinx.android.synthetic.main.fragment_edit_feature.toolbartext
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -14,18 +17,24 @@ class AddFeatureActivity : AppCompatActivity(){
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setContentView(R.layout.fragment_add_feature)
+        setContentView(R.layout.fragment_edit_feature)
+
+        setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowHomeEnabled(true)
 
         val api = ApiInterface.getClient().create(ApiService::class.java)
 
-        buttonSubmit.setOnClickListener{
+        toolbartext.text = "Add Feature"
+
+        buttonSubmitEditFeature.setOnClickListener{
 
 
-            val name = inputfeaturename.text.toString().trim()
+            val name = editfeaturename.text.toString().trim()
 
             if (name.isEmpty()){
-                inputfeaturename.error = "Name required!"
-                inputfeaturename.requestFocus()
+                editfeaturename.error = "Name required!"
+                editfeaturename.requestFocus()
                 return@setOnClickListener
             }
 
@@ -55,7 +64,7 @@ class AddFeatureActivity : AppCompatActivity(){
 
         }
 
-        buttonCancel.setOnClickListener {
+        buttonCancelEditFeature.setOnClickListener {
             finish()
         }
 

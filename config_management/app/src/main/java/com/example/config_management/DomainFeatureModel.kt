@@ -8,7 +8,10 @@ data class DomainFeatureModel(
 
     @SerializedName("id")
     val id: Int
-)
+){
+    var isSelected = false
+}
+
 
 data class DomainsInfo(
 

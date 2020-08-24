@@ -10,8 +10,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
+import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_detail.*
+import kotlinx.android.synthetic.main.fragment_detail.toolbartext
+import kotlinx.android.synthetic.main.fragment_edit_feature.*
 import kotlinx.android.synthetic.main.fragment_entity.*
 import retrofit2.Call
 import retrofit2.Callback
@@ -19,21 +22,25 @@ import retrofit2.Response
 
 class DetailViewActivity : AppCompatActivity(){
 
+    private val detailAdapter by lazy {DetailAdapter()}
+    var oldparamextra:String? = null
+    var idextras:Int = -1
+    val api = ApiInterface.getClient().create(ApiService::class.java)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        var idextras = intent.getIntExtra("id", -1)
-        var oldparamextra = intent.getStringExtra("oldparam")
-
-        println(idextras)
-
-        val pagerAdapter = DetailPagerAdapter(supportFragmentManager, idextras, oldparamextra!!)
-
         setContentView(R.layout.fragment_detail)
-        viewpagerdetail.adapter = pagerAdapter
 
-        textView5.text = idextras.toString()
+        setSupportActionBar(toolbar2)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowHomeEnabled(true)
+
+        idextras = intent.getIntExtra("id", -1)
+        oldparamextra = intent.getStringExtra("oldparam")
+        var name = intent.getStringExtra("name")
+
+        tvDetailName.text = name
 
         if (oldparamextra=="Domains"){
             textView6.text = "Associated Features -> "
@@ -41,6 +48,20 @@ class DetailViewActivity : AppCompatActivity(){
         else{
             textView6.text = "Domains Associated to -> "
 
+        }
+
+        if(oldparamextra=="Domains"){
+            toolbartext.text = "Domain Detail"
+        }
+        else
+        {
+            toolbartext.text = "Feature Detail"
+        }
+
+        recyclerview2.apply {
+            setHasFixedSize(true)
+            layoutManager = LinearLayoutManager(this@DetailViewActivity)
+            adapter = detailAdapter
         }
 
         buttonEdit.setOnClickListener {
@@ -110,20 +131,68 @@ class DetailViewActivity : AppCompatActivity(){
 
     }
 
-}
-
-class DetailPagerAdapter(fm: FragmentManager, idinclass:Int, name:String) :
-    FragmentPagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
-
-    override fun getCount(): Int {
-        return 1
+    override fun onResume() {
+        super.onResume()
+        hitApi()
     }
 
-    private val id = idinclass
-    private val name = name
+    private fun hitApi() {
+        if (oldparamextra == "Domains") {
+            val call = api.detailDomain(idextras)
+            onDetailDomain(call)
+        } else if (oldparamextra == "Features") {
+            val call = api.detailFeature(idextras)
+            onDetailFeature(call)
+        }
+    }
 
-    override fun getItem(position: Int): Fragment {
-        return DetailFragment.newInstance(id,name)
+
+    private fun onDetailDomain(call: Call<DomainDetail>) {
+        call.enqueue(object : Callback<DomainDetail> {
+            override fun onResponse(call: Call<DomainDetail>, response: Response<DomainDetail>) {
+                if (response.isSuccessful) {
+//                    Log.e("worked", "onResponse: " + response.body())
+                    response.body()?.domainInfo?.featureList?.let {
+                        detailAdapter.setDetailData(it)
+                        if (it.size==0) {
+                            textView6.text = "No Features associated to this domain"
+                        }
+                    }
+
+                } else {
+                    Log.e("not working", "onResponse: ")
+                }
+            }
+
+            override fun onFailure(call: Call<DomainDetail>, t: Throwable) {
+                Log.e("fail", "no_resp" + t.message)
+            }
+
+        })
+    }
+    private fun onDetailFeature(call: Call<FeatureDetail>) {
+        call.enqueue(object : Callback<FeatureDetail> {
+            override fun onResponse(call: Call<FeatureDetail>, response: Response<FeatureDetail>) {
+                if (response.isSuccessful) {
+//                    Log.e("worked", "onResponse: " + response.body())
+                    response.body()?.featureInfo?.domainList?.let {
+                        detailAdapter.setDetailData(it)
+                        if (it.size==0) {
+                            textView6.text = "Feature is not associated to any domain"
+                        }
+                    }
+
+
+                } else {
+                    Log.e("not working", "onResponse: ")
+                }
+            }
+
+            override fun onFailure(call: Call<FeatureDetail>, t: Throwable) {
+                Log.e("fail", "no_resp" + t.message)
+            }
+
+        })
     }
 
 }

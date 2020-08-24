@@ -23,9 +23,10 @@ private const val ARG_PARAM2 = "param2"
 class EntityFragment : Fragment() {
     private var param1: String? = null
     private val myAdapter by lazy {
-        MyAdapter({
+        MyAdapter({ id: Int, name: String ->
             val intent = Intent(view?.context, DetailViewActivity::class.java)
-            intent.putExtra("id", it)
+            intent.putExtra("id", id)
+            intent.putExtra("name", name)
             intent.putExtra("oldparam", param1)
             view?.context?.startActivity(intent)
         },

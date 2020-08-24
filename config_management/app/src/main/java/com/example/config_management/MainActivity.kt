@@ -23,6 +23,9 @@ class MainActivity : AppCompatActivity() {
         pagerAdapter.title.add("Features")
         viewpager.adapter = pagerAdapter
         tabs.setupWithViewPager(viewpager)
+
+        val pos :Int = viewpager.currentItem
+//        Search view
         
     }
 }

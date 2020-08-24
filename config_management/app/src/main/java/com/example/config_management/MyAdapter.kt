@@ -10,7 +10,7 @@ import kotlinx.android.synthetic.main.list_item.view.*
 
 
 class MyAdapter(
-    var onView: (id: Int) -> Unit,
+    var onView: (id: Int, name: String) -> Unit,
     var onDelete: (id: Int) -> Unit,
     var onEdit: (id: Int) -> Unit,
     var retry: () -> Unit
@@ -25,7 +25,7 @@ class MyAdapter(
     inner class MyViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
 
         init {
-            view.btnView.setOnClickListener { onView.invoke(myDataset[adapterPosition].id) }
+            view.btnView.setOnClickListener { onView.invoke(myDataset[adapterPosition].id, myDataset[adapterPosition].name) }
             view.btnEdit.setOnClickListener { onEdit.invoke(myDataset[adapterPosition].id) }
             view.btnDelete.setOnClickListener { onDelete.invoke(myDataset[adapterPosition].id) }
         }

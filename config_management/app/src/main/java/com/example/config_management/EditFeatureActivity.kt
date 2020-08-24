@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import kotlinx.android.synthetic.main.fragment_add_feature.*
 import kotlinx.android.synthetic.main.fragment_edit_feature.*
 import retrofit2.Call
 import retrofit2.Callback
@@ -16,6 +15,10 @@ class EditFeatureActivity : AppCompatActivity(){
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.fragment_edit_feature)
+
+        setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowHomeEnabled(true)
 
         var idextras = intent.getIntExtra("id", -1)
 

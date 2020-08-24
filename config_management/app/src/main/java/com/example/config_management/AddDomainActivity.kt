@@ -3,108 +3,56 @@ package com.example.config_management
 import android.app.AlertDialog
 import android.os.Bundle
 import android.util.Log
-import android.view.View
-import android.widget.Button
+import android.widget.BaseAdapter
 import android.widget.Toast
+import android.widget.Toolbar
 import androidx.appcompat.app.AppCompatActivity
-import kotlinx.android.synthetic.main.fragment_add_domain.*
+import kotlinx.android.synthetic.main.fragment_edit_domain.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
+class AddDomainActivity : AppCompatActivity() {
 
-class AddDomainActivity : AppCompatActivity(){
+    private val api = ApiInterface.getClient().create(ApiService::class.java)
+    private var listFeatureInfo : List<DomainFeatureModel> = arrayListOf()
 
-    var featureBool : BooleanArray? = null
-    var featureNames : MutableList<String> = arrayListOf()
-    var featureIds : MutableList<Int> = arrayListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContentView(R.layout.fragment_edit_domain)
 
-        setContentView(R.layout.fragment_add_domain)
+        setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowHomeEnabled(true)
 
+        toolbartext.text = "Add Domain"
+        editdomainbuttonfeatures.text = "Add Mapping"
 
-        fun acceptList(featureNames: MutableList<String>, featureIds: MutableList<Int>){
+        val callNew = api.fetchAllFeatures()
+        onFetchFeatures(callNew)
 
-            val convertedFeatureNames: Array<String> = featureNames.toTypedArray()
-
-
-            val builder = AlertDialog.Builder(this)
-
-            builder.setTitle("Feature List")
-            builder.setMultiChoiceItems(convertedFeatureNames, featureBool){ dialog, which, isChecked ->
-                featureBool!![which] = isChecked
-            }
-
-
-
-            builder.setPositiveButton("Submit"){ dialog, which ->
-
-            }
-
-            builder.setNegativeButton("Clear Selection"){ dialog, which ->
-                featureBool = BooleanArray(convertedFeatureNames.size)
-                Toast.makeText(applicationContext, "All Feature Selections have been cleared", Toast.LENGTH_LONG).show()
-            }
-
-            var dialog = builder.create()
-
-            dialog.show()
-
+        editdomainbuttonfeatures.setOnClickListener {
+            acceptList()
         }
 
-        fun onFetchFeatures(call: Call<FeaturesInfo>){
-            call.enqueue(object : Callback<FeaturesInfo> {
-                override fun onResponse(
-                    call: Call<FeaturesInfo>,
-                    response: Response<FeaturesInfo>
-                ) {
-                    val res = response.body()?.featuresInfo
-                    Log.e("success", "gg" + res)
-
-                    for (i in 0 until res!!.size) {
-                        featureNames.add(res[i].name)
-                        featureIds.add(res[i].id)
-                    }
-                    featureBool = BooleanArray(featureIds.size)
-                    buttonfeatures.setOnClickListener {
-                        acceptList(featureNames, featureIds)
-                    }
-                }
-
-                override fun onFailure(call: Call<FeaturesInfo>, t: Throwable) {
-                    Log.e("fail", "no_resp" + t.message)
-                }
-
-            })
-        }
-
-        val api = ApiInterface.getClient().create(ApiService::class.java)
-        val call = api.fetchAllFeatures()
-        onFetchFeatures(call)
-
-        buttonSubmitDomain.setOnClickListener {
-
-
-            val name = inputdomainname.text.toString().trim()
+        buttonSubmiteditDomain.setOnClickListener {
+            val name = editdomainname.text.toString().trim()
 
             if (name.isEmpty()) {
-                inputdomainname.error = "Name required!"
-                inputdomainname.requestFocus()
+                editdomainname.error = "Name required!"
+                editdomainname.requestFocus()
                 return@setOnClickListener
             }
-            val feature_id_list : MutableList<Int> = arrayListOf()
-            for (i in 0 until (featureBool!!.size)){
-                if (featureBool!![i]){
-
-                    feature_id_list?.add(featureIds[i])
+            val feature_id_list = arrayListOf<Int>()
+            for (i in listFeatureInfo.indices) {
+                if (listFeatureInfo[i].isSelected) {
+                    feature_id_list.add(listFeatureInfo[i].id)
                 }
 
             }
 
             val postData = AddDomain(name, feature_id_list)
-            val api = ApiInterface.getClient().create(ApiService::class.java)
 
             api.addDomain(postData)
                 .enqueue(object : Callback<AddDomainResponse> {
@@ -134,14 +82,77 @@ class AddDomainActivity : AppCompatActivity(){
                     }
 
                 })
-
-
         }
-
-        buttonCancelDomain.setOnClickListener {
+        buttonCanceleditDomain.setOnClickListener {
             finish()
         }
+    }
+
+    fun onFetchFeatures(call: Call<FeaturesInfo>) {
+        call.enqueue(object : Callback<FeaturesInfo> {
+            override fun onResponse(
+                call: Call<FeaturesInfo>,
+                response: Response<FeaturesInfo>
+            ) {
+
+                response.body()?.featuresInfo?.let {
+                    listFeatureInfo = it
+                }
+            }
+            override fun onFailure(call: Call<FeaturesInfo>, t: Throwable) {
+                Log.e("fail", "no_resp" + t.message)
+            }
+
+        })
+    }
+
+    private fun acceptList() {
+
+        var temp = BooleanArray(listFeatureInfo.size)
+        val mainList = Array(listFeatureInfo.size){ "" }
+
+        for (i in listFeatureInfo.indices){
+            mainList[i] = listFeatureInfo[i].name
+            temp[i] = listFeatureInfo[i].isSelected
+        }
+
+        val builder = AlertDialog.Builder(this)
+
+        builder.setTitle("Checked Feature List")
+        builder.setCancelable(false)
+
+        builder.setMultiChoiceItems(mainList, temp) { dialog, pos, isChecked ->
+            temp[pos] = isChecked
+        }
+
+        builder.setPositiveButton("Submit") { dialog, _ ->
+            for (i in temp.indices){
+                listFeatureInfo[i].isSelected = temp[i]
+            }
+            dialog.dismiss()
+        }
+
+        builder.setNeutralButton("Clear Selection") { dialog, _ ->
+            for (i in listFeatureInfo.indices){
+                listFeatureInfo[i].isSelected = false
+            }
+            Toast.makeText(
+                this@AddDomainActivity,
+                "All Feature Selections have been cleared",
+                Toast.LENGTH_LONG
+            ).show()
+            dialog.dismiss()
+            acceptList()
+        }
+
+        builder.setNegativeButton("Cancel"){dialog, _ ->
+            dialog.dismiss()
+        }
+
+        var dialog = builder.create()
+        dialog.show()
 
     }
+
 
 }
